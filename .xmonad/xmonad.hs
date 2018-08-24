@@ -19,9 +19,7 @@ import           XMonad.Layout.WindowArranger
 
 myManageHook = composeAll
   [ title =? "Authy" --> doFloat
-  , className =? "sun-awt-X11-XDialogPeer" --> doFloat
   , title =? "jetbrains-studio" --> doFloat
-  , className =? "emulator" --> doFloat
   , manageDocks
   ]
 
@@ -39,6 +37,7 @@ main = do
   xmproc <- spawnPipe "xmobar ~/.xmobarrc"
   xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal = "urxvt"
+    , modMask = mod4Mask
     , manageHook = myManageHook <+> manageHook defaultConfig
     , layoutHook = mouseResize $ windowArrange $ avoidStruts $ myLayouts
     , handleEventHook = mconcat
