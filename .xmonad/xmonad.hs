@@ -1,41 +1,48 @@
--------------------------------------------------------------------------------
--- xmonad.hs for xmonad-darcs
--------------------------------------------------------------------------------
--- Compiler flags --
-{-# LANGUAGE NoMonomorphismRestriction #-}
+import qualified Data.Map                     as M
+import           Graphics.X11.ExtraTypes.XF86
+import           System.Exit
+import           System.IO
+import           XMonad
+import           XMonad.Actions.CycleWS
+import           XMonad.Hooks.DynamicLog
+import           XMonad.Hooks.ManageDocks
+import qualified XMonad.StackSet              as W
+import           XMonad.Util.EZConfig
+import           XMonad.Util.Run              (spawnPipe)
 
--- Imports --
--- stuff
-import XMonad
-import qualified XMonad.StackSet as W
-import qualified Data.Map as M
-import System.Exit
-import XMonad.Util.Run (safeSpawn)
-import Graphics.X11.ExtraTypes.XF86
+import           XMonad.Prompt
+import           XMonad.Prompt.Shell
 
--- actions
-import XMonad.Actions.GridSelect
-import XMonad.Actions.CycleWS
+import           XMonad.Actions.MouseResize
+import           XMonad.Hooks.UrgencyHook
+import           XMonad.Layout.WindowArranger
 
--- hooks
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.UrgencyHook
-import XMonad.Hooks.InsertPosition
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.ICCCMFocus
+myManageHook = composeAll
+  [ title =? "Authy" --> doFloat
+  , className =? "sun-awt-X11-XDialogPeer" --> doFloat
+  , title =? "jetbrains-studio" --> doFloat
+  , className =? "emulator" --> doFloat
+  , manageDocks
+  ]
 
--- layouts
-import XMonad.Layout.NoBorders
-import XMonad.Layout.ResizableTile
-import XMonad.Layout.Renamed
-import XMonad.Layout.Tabbed
+myLayouts = Full ||| tiled ||| Mirror tiled
+  where
+    tiled = Tall nmaster delta ratio
+    -- Default number of windows in the master pane
+    nmaster = 1
+    -- Percent of screen to increment by when resizing panes
+    delta = 3/100
+    -- Default portion of the screen occupied by master pane
+    ratio = 1/2
 
--------------------------------------------------------------------------------
--- Main --
--- main :: IO ()
 main = do
-  xmonad $ defaultConfig {
-         terminal = "urxvt"
-         }
-
+  xmproc <- spawnPipe "xmobar ~/.xmobarrc"
+  xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
+    { terminal = "urxvt"
+    , manageHook = myManageHook <+> manageHook defaultConfig
+    , layoutHook = mouseResize $ windowArrange $ avoidStruts $ myLayouts
+    , handleEventHook = mconcat
+                      [ docksEventHook
+                      , handleEventHook defaultConfig ]
+    , logHook = dynamicLogWithPP $ xmobarPP { ppOutput = hPutStrLn xmproc }
+    }
