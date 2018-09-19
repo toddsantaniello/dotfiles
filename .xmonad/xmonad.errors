@@ -1,15 +1,32 @@
 
-xmonad.hs:26:1: warning: [-Wdeprecations]
-    Module ‘XMonad.Hooks.ICCCMFocus’ is deprecated:
-      XMonad.Hooks.ICCCMFocus: xmonad>0.10 core merged issue 177
-   |
-26 | import XMonad.Hooks.ICCCMFocus
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-xmonad.hs:38:12: warning: [-Wdeprecations]
+xmonad.hs:47:44: warning: [-Wdeprecations]
     In the use of ‘defaultConfig’
     (imported from XMonad, but defined in XMonad.Config):
     Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."
    |
-38 |   xmonad $ defaultConfig {
-   |            ^^^^^^^^^^^^^
+47 |   xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
+   |                                            ^^^^^^^^^^^^^
+
+xmonad.hs:50:44: warning: [-Wdeprecations]
+    In the use of ‘defaultConfig’
+    (imported from XMonad, but defined in XMonad.Config):
+    Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."
+   |
+50 |     , keys = \c -> myKeys c `M.union` keys defaultConfig c
+   |                                            ^^^^^^^^^^^^^
+
+xmonad.hs:51:48: warning: [-Wdeprecations]
+    In the use of ‘defaultConfig’
+    (imported from XMonad, but defined in XMonad.Config):
+    Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."
+   |
+51 |     , manageHook = myManageHook <+> manageHook defaultConfig
+   |                                                ^^^^^^^^^^^^^
+
+xmonad.hs:55:41: warning: [-Wdeprecations]
+    In the use of ‘defaultConfig’
+    (imported from XMonad, but defined in XMonad.Config):
+    Deprecated: "Use def (from Data.Default, and re-exported by XMonad and XMonad.Config) instead."
+   |
+55 |                       , handleEventHook defaultConfig ]
+   |                                         ^^^^^^^^^^^^^
