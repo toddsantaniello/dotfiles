@@ -1,0 +1,6 @@
+# Add your local tmux config here
+# I like using C-b
+set-option -g prefix C-b
+unbind-key C-b
+bind-key C-b send-prefix
+set -g base-index 1
