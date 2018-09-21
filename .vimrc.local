@@ -1,0 +1,101 @@
+set nocursorline " don't highlight current line
+
+colorscheme grb256
+set background=dark
+" Theme support for dark themes.
+hi CursorLine ctermbg=black
+hi LineNr ctermbg=black
+hi CursorLineNr ctermfg=None
+hi TabLineSel ctermfg=None
+hi TabLineFill ctermfg=darkgrey
+hi Visual cterm=reverse
+hi Search ctermfg=white ctermbg=darkgrey
+" keyboard shortcuts
+inoremap jj <ESC>
+
+" gui settings
+" if (&t_Co == 256 || has('gui_running'))
+"     if ($TERM_PROGRAM == 'iTerm.app')
+"         colorscheme solarized
+"     else
+"         colorscheme desert
+"     endif
+" endif
+
+" Disambiguate ,a & ,t from the Align plugin, making them fast again.
+"
+" This section is here to prevent AlignMaps from adding a bunch of mappings
+" that interfere with the very-common ,a and ,t mappings. This will get run
+" at every startup to remove the AlignMaps for the *next* vim startup.
+"
+" If you do want the AlignMaps mappings, remove this section, remove
+" ~/.vim/bundle/Align, and re-run rake in maximum-awesome.
+function! s:RemoveConflictingAlignMaps()
+  if exists("g:loaded_AlignMapsPlugin")
+    AlignMapsClean
+  endif
+endfunction
+command! -nargs=0 RemoveConflictingAlignMaps call s:RemoveConflictingAlignMaps()
+silent! autocmd VimEnter * RemoveConflictingAlignMaps
+" Super secret awesome git squash macro
+map t 0dwIs<SPACE><ESC>j
+
+let g:syntastic_mode_map = { 'mode': 'active',
+                           \ 'active_filetypes': ['foo', 'bar'],
+                           \ 'passive_filetypes': ['java', 'objc'] }
+
+let NERDTreeQuitOnOpen=0
+
+"set smartindent
+"set tabstop=4
+"set shiftwidth=4
+"set expandtab
+"
+"
+" Toggles for light/black
+"set background=dark
+set background=light
+"    4 
+"     5 " keyboard shortcuts
+"set gfn=Source\ Code\ Pro:h11
+"set gfn=Monaco:h10
+"set gfn=Droid\ Sans\ Mono:h11
+"set gfn=Inconsolata:h13
+set gfn=Menlo\ Regular:h11
+"set gfn=Meslo\ LG\ S\ DZ\ Regular:h11
+
+:noremap <F9> <Esc>
+ \<C-W>}o//TEMP MARKER<Esc>
+ \<C-W>P1G/public class<CR><Esc>yy<C-W>pG?import<CR><Esc>p<Esc>
+ \<C-W>P1G/package<CR><Esc>yy<C-W>pG?import<CR><Esc>p<Esc>
+ \$xa.<Esc>0jwwi<CR><Esc>kdd<Esc>
+ \wDx<Esc>kJxx<Esc>$a;<Esc>
+ \0cwimport<Esc>
+ \:update<CR><Esc>
+ \/TEMP MARKER<CR>dd<Esc>
+
+"set gfn=ProggySquareTTSZ:h16
+"set noanti
+
+function ToggleFont()
+    if (&guifont == "ProggySquareTTSZ:h16")
+        set gfn=Inconsolata:h13
+        set antialias
+    else
+        set gfn=ProggySquareTTSZ:h16
+        set noantialias
+    endif
+endfunction
+
+function ToggleBackground()
+    if (&background == "light")
+        set background=dark
+    else
+        set background=light
+    endif
+endfunction
+
+:noremap <F4> :call ToggleFont()<CR>
+:noremap <F5> :call ToggleBackground()<CR>
+autocmd FileType java set tags=~/.tags
+
