@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source "$(git --exec-path)/git-sh-setup"
 
@@ -12,7 +12,7 @@ function _squash() {
         fi
     else
         usage
-    fi  
+    fi
 }
 
 _squash $1

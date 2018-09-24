@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source "$(git --exec-path)/git-sh-setup"
+
+USAGE="COMMITS"
+function _fix() {
+  local mergeBase=`git merge-base origin/master HEAD`
+  local tip=`git rev-list $mergeBase..HEAD | tail -n1`
+  git commit --fixup $tip
+}
+
+_fix
