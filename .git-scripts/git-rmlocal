@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+echo -e "\nBranches (do not forget to $ git fetch --all -p) :"
+git branch --all
+
+orphans_branch=""
+existing_branch=""
+for branch in `git branch | cut -c 3-`
+do
+  remote=$(git branch -r | cut -c 3- | grep -v HEAD | grep $branch)
+  if [ -z ${remote} ]
+  then
+    orphans_branch="$orphans_branch  $branch\n"
+  else
+    existing_branch="$existing_branch  $branch\n"
+  fi
+done
+
+# Summary existing branches on origin
+if [ -n "$existing_branch" ]
+then
+  echo -e "\nFollowing branch still exists on origin :"
+  echo -e "${existing_branch} \n"
+fi
+
+# Summary orphans local branches
+if [ -n "$orphans_branch" ]
+then
+  echo -e "\nFollowing branch can be removed :"
+  echo -e "${orphans_branch} \n"
+
+  # Prompt user to remove orphans branches.
+  for branch in `git branch | cut -c 3-`
+  do
+    remote=$(git branch -r | cut -c 3- | grep -v HEAD | grep $branch)
+    if [ -z ${remote} ]
+    then
+      orphans_branch="$orphans_branch  $branch\n"
+      read -p "Delete local branch $branch (y/N) ? " choice
+      case "$choice" in
+        y|Y ) git branch -D $branch;;
+        n|N ) ;;
+        * ) ;;
+      esac
+    else
+      existing_branch="$existing_branch  $branch\n"
+    fi
+  done
+fi
