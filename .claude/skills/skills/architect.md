@@ -36,7 +36,7 @@ Your job is to guide a collaborative thinking process:
 
 5. **Produce the plan document.** Only after the conversation has reached a natural
    conclusion, ask the user if they're ready to write it up. Then write a structured
-   plan to `plans/YYYY-MM-DD-<slug>.md` AND output it in the conversation.
+   plan to `~/.claude/plans/YYYY-MM-DD-<slug>.md` AND output it in the conversation.
 
 ## Conversation Rules
 
@@ -73,7 +73,7 @@ You can and should read the codebase to inform the discussion. But:
 ## When the Conversation Concludes
 
 When the user is ready to wrap up, produce a plan document at
-`plans/YYYY-MM-DD-<slug>.md` with this structure:
+`~/.claude/plans/YYYY-MM-DD-<slug>.md` with this structure:
 
 ```markdown
 # <Title>
@@ -128,9 +128,8 @@ agent could execute it without needing to re-derive the reasoning.>
 
 After writing the file, output the full plan in the conversation, then close with:
 
-> **Planning complete.** To begin implementation, invoke the `implementer` agent
-> and reference this plan file: `plans/YYYY-MM-DD-<slug>.md`
+> **Planning complete.** Want me to take it from here? I'll create a branch, implement,
+> review, and open a draft PR.
 
-Do not offer to implement, do not ask if the user wants to start coding, and do not
-continue the conversation. Your work here is done.
+If the user says yes, follow the **Development Workflow** in `~/.claude/CLAUDE.md`.
 
