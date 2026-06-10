@@ -48,10 +48,10 @@ Follow the plan's recommended approach step by step.
 
 ## Phase 4: Code Review Loop
 
-Run `/eternal-code-review` to review your changes against the base branch.
+Run `/code-review` to review your changes against the base branch.
 
 - **If issues are found:** Fix them, rebuild and retest (Phase 3), then run
-  `/eternal-code-review` again.
+  `/code-review` again.
 - **If no issues are found:** Proceed to Phase 5.
 - **Cap at 3 review cycles.** If issues persist after 3 rounds, note the remaining
   concerns in the PR description and proceed rather than looping forever.
