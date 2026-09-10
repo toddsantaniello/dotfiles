@@ -1,9 +1,11 @@
-# iOS Architecture: SwiftUI + Observation
+# iOS Architecture: SwiftUI + MV (Model-View)
 
-A default template for structuring native iOS apps (reference implementation:
-SwiftUI + the Observation framework + SwiftData) so they stay easy to reason
-about as they grow, and stay easy to build correctly alongside an AI pair
-programmer.
+A default template for structuring native iOS apps around the MV
+(Model-View) pattern: SwiftUI views bind directly to `@Observable` Model
+objects, with no ViewModel layer in between. SwiftData is one way a Model
+can hold its state — not a requirement of the pattern. This file should
+work equally well for an app backed by SwiftData, a plain REST client, or
+in-memory state.
 
 See also: `ai-collaboration.md` for how to work with an AI agent on any
 codebase, regardless of platform.
@@ -15,13 +17,14 @@ project's own CLAUDE.md, not here.
 
 ## Philosophy
 
-- **Don't build a layer you don't need yet.** A `@Model` class is already
-  observable, already persisted, and already reactive via `@Query`. Adding
-  a Repository/UseCase/DataSource stack on top of that by default is
-  importing complexity that SwiftData already solved — introduce those
-  layers only once a concrete need shows up (see "When to Add an
-  `@Observable` Object" and "When to Add a Repository" below), not as a
-  starting posture.
+- **The Model is the state — there's no ViewModel to keep in sync with it.**
+  An `@Observable` Model object owns state and business logic; the view
+  reads and calls it directly. Don't introduce a ViewModel whose only job
+  is forwarding to a Model underneath it.
+- **Don't build a layer you don't need yet.** A single Model object,
+  reasonably scoped to a screen or a feature, is the starting point. Split
+  it or add a Repository only once a concrete need shows up (see "When to
+  Split Further" below), not as a starting posture.
 - **Follow the platform's current idiom, not last year's training data.**
   SwiftUI's recommended shape changes yearly (ObservableObject → Observable,
   NavigationView → NavigationStack, manual Combine → Swift concurrency).
@@ -29,107 +32,89 @@ project's own CLAUDE.md, not here.
   active OS version, current Apple documentation) rather than assuming the
   pattern that shows up most often in general training data.
 - **One direction of truth.** State flows down from a single owner; events
-  flow up. A view never holds its own mutable copy of state something else
+  flow up. A view never holds its own mutable copy of state its Model
   already owns.
 - **Trust boundaries, not vibes.** Data crossing in from the network is
-  validated defensively and fails closed per unit of work. Once persisted
-  as a `@Model`, the interior of the app can assume it's well-formed.
+  validated defensively and fails closed per unit of work. Once it's in the
+  Model's state, the view can assume it's well-formed.
 
 ## Default Shape (Most Screens)
 
 ```
 View (SwiftUI)
-  ↓ @Query (reactive fetch) or @Bindable (form binding)
-@Model (SwiftData) — persistence, domain meaning, and observability in one type
+  ↓ binds directly to
+@Observable Model — owns state, business logic, and whatever persistence
+                     it uses (SwiftData, a network client, UserDefaults,
+                     in-memory — the pattern doesn't care which)
 ```
-
-For a straightforward CRUD screen, the view queries the model directly and
-mutates it through the environment's `modelContext`:
-
-```swift
-struct ItemListView: View {
-    @Query(sort: \Item.name) private var items: [Item]
-    @Environment(\.modelContext) private var modelContext
-
-    var body: some View {
-        List(items) { item in
-            ItemRow(item: item)
-        }
-    }
-}
-```
-
-## When to Add an `@Observable` Object
-
-Introduce a screen-level `@Observable` class only once the screen's logic
-exceeds simple binding to a model — e.g. multi-step async orchestration,
-state that isn't directly representable by a `@Query`, or logic shared
-across more than one view. Signs you've crossed that line:
-
-- The view needs to coordinate more than one async operation before
-  rendering (e.g. a network fetch that populates SwiftData, with loading/
-  error states the view itself shouldn't own).
-- Derived state that isn't just a filtered/sorted `@Query` — computed from
-  multiple sources, or requiring logic more complex than a predicate.
-- The same orchestration logic is needed from more than one view.
-
-When you do add one:
 
 ```swift
 @Observable
 @MainActor
 final class ItemListModel {
+    var items: [Item] = []
     var isLoading = false
-    var errorMessage: String?
 
-    func refresh(context: ModelContext) async {
+    func load() async {
         isLoading = true
         defer { isLoading = false }
-        // fetch, then write results into SwiftData via context
+        items = await api.fetchItems()
+    }
+}
+
+struct ItemListView: View {
+    @State private var model = ItemListModel()
+
+    var body: some View {
+        List(model.items) { item in
+            ItemRow(item: item)
+        }
+        .task { await model.load() }
     }
 }
 ```
 
-One `@Observable` object owns its slice of state; nothing outside it (not a
-child view, not a sibling) holds a second copy.
+There is no separate ViewModel type here — `ItemListModel` is not a
+formality standing between the view and "the real logic," it *is* the
+logic. Inject it with `@State` (owned by this view) or `@Environment`
+(shared across a subtree).
 
-## When to Add a Repository
+**If you're using SwiftData specifically:** `@Query` is a property wrapper
+that only works directly inside a `View`, not inside a Model class. Two
+valid shapes, pick based on whether the query result needs mixing with
+other model state:
 
-Add a Repository abstraction only when there's a real reason a view
-shouldn't talk to SwiftData directly — most commonly, more than one data
-source for the same entity (e.g. a remote API *and* local persistence,
-where something needs to decide which one to trust and when to sync), or a
-backend that's genuinely swappable. Signs you've crossed that line:
+- Simple list, nothing else to compute: use `@Query` directly in the view,
+  skip the Model object entirely for that screen.
+- Query results need to combine with other state/logic the Model owns:
+  fetch inside the Model via `modelContext.fetch()`, not `@Query`.
 
-- A screen needs data that comes from a network call, not just what's
-  already in the local store.
-- More than one screen needs the same "check freshness, fetch if stale"
-  logic — worth centralizing once duplicated, not before.
+## When to Split Further
 
-Until then, treat the `@Model` itself as the domain layer. Don't introduce
-a separate intermediate type to sit between a decoded network response and
-the `@Model` you persist it as — with a single local store, nothing else
-consumes that intermediate shape long enough to justify carrying it
-forward as its own type. Decode network responses straight onto (or
-directly into) your `@Model` types.
+Split a screen's single Model into more than one collaborator, or
+introduce a dedicated persistence/data-access type, once one of these is
+actually true — not preemptively:
 
-## SwiftData Rules
+- The Model needs data from more than one source for the same entity
+  (e.g. a remote API *and* local persistence, where something needs to
+  decide which to trust and when to sync).
+- The same fetch/orchestration logic (e.g. "check freshness, fetch if
+  stale") is needed by more than one screen — worth centralizing once
+  duplicated, not before.
+- A single Model class is accumulating unrelated responsibilities for one
+  screen (e.g. both list state and an unrelated settings toggle) — split
+  along those lines, not along a generic "layer" boundary.
 
-- Use `@Bindable` for two-way form bindings to a model's properties.
-- Use `@Query` in views for reactive fetches; use `modelContext.fetch()` in
-  non-view code (e.g. inside an `@Observable` orchestration object).
-- Relationship delete rules are explicit at the model level: `.cascade`,
-  `.nullify`, or `.deny` — pick deliberately, don't leave the default.
-- `#Predicate` has real limitations. When a filter can't be expressed in
-  the predicate DSL, fetch and filter in memory rather than fighting the
-  predicate — but note that as a known tradeoff, not a silent workaround.
+Until one of these is true, one Model object per screen or cohesive
+feature, with no intermediate wire-format/domain-format split — a decoded
+network response can be mapped straight into the state your Model exposes.
 
 ## Concurrency
 
 - Target current Swift concurrency (structured `async/await`, no completion
   handlers for new code).
-- Mark `@Observable` orchestration classes `@MainActor` — this is what
-  keeps UI-facing state safe without manual dispatch.
+- Mark `@Observable` Model classes `@MainActor` — this is what keeps
+  UI-facing state safe without manual dispatch.
 - Cross-actor value types are `Sendable`.
 - Use `nonisolated` only when there's a measured performance need, not by
   default.
@@ -165,20 +150,20 @@ not something this shared file can supply.
   `navigationDestination(for:)`.
 - NEVER use `ObservableObject`, `@StateObject`, `@ObservedObject`, or
   `@Published` — always `@Observable` with `@State`.
-- NEVER add the `@Observable` macro to a `@Model` class — it's already
-  Observable.
-- NEVER introduce a Repository or a screen-level `@Observable` object
-  before the triggers in "When to Add an `@Observable` Object" or "When
-  to Add a Repository" are actually met.
-- ALWAYS use `@Bindable` for two-way form bindings to a model's properties.
-- ALWAYS mark `@Observable` orchestration classes `@MainActor`.
+- NEVER introduce a ViewModel type whose only job is forwarding to a Model
+  underneath it.
+- NEVER use `@Query` inside a Model class — it only works directly inside
+  a `View`. Use `modelContext.fetch()` in a Model instead.
+- NEVER split a Model into more layers before the triggers in "When to
+  Split Further" are actually met.
+- ALWAYS mark `@Observable` Model classes `@MainActor`.
 - ALWAYS prefer MCP tools over raw shell commands for build, test, and
   simulator operations when they're available (see Build & Test above).
 
 ## Not Covered Here
 
-- Testing conventions (unit tests for `@Observable` orchestration logic,
-  SwiftUI snapshot/UI testing).
+- Testing conventions (unit tests for Model logic, SwiftUI snapshot/UI
+  testing).
 - Multi-platform extensions (watchOS/tvOS companion targets) — worth a
   separate document once exercised on a real multi-target app.
 - Per-project specifics (bundle ID, deployment target, scheme names, file
