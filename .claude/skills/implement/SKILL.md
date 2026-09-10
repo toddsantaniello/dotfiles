@@ -46,17 +46,46 @@ Follow the plan's recommended approach step by step.
 5. If build or tests still fail after 3 fix attempts, stop and report the failure
    clearly. Do not push broken code.
 
-## Phase 4: Code Review Loop
+## Phase 4: Verify Behavior
+
+Build and passing tests confirm the code compiles and existing logic isn't
+broken — they don't confirm the change actually does what the plan intended.
+Before code review, drive the app directly and observe the result.
+
+**For iOS projects**, use XcodeBuildMCP against a simulator:
+1. `build_run_sim` (or `boot_sim` + `install_app_sim` + `launch_app_sim` if
+   already built) to get the app running.
+2. Navigate to the screen/flow the plan describes changing, exercising the
+   actual interaction (tap, type, navigate) — not just the initial state.
+3. Use `screenshot` to visually confirm the UI matches what the plan
+   intended. Use `snapshot_ui` when you need structural confirmation a
+   screenshot can't show (element hierarchy, accessibility identifiers,
+   exact state).
+4. Compare what you observe against the plan's stated intent and acceptance
+   criteria.
+
+**For non-iOS projects**, use the project's `run` skill if one exists to
+launch the app and confirm the change visually/functionally.
+
+**This step is advisory, not a gate.** Attempt it whenever the change has a
+runtime or UI surface. Record what you observed — confirmed matching intent,
+observed a mismatch, or couldn't be verified (no UI change, no simulator/run
+path available, etc.) — and carry that note into the PR description and the
+Phase 7 report. Do not loop or block here; if something looks wrong, fix it
+if the fix is obvious, otherwise flag it clearly for the human reviewer
+rather than stalling the pipeline.
+
+## Phase 5: Code Review Loop
 
 Run `/code-review` to review your changes against the base branch.
 
 - **If issues are found:** Fix them, rebuild and retest (Phase 3), then run
   `/code-review` again.
-- **If no issues are found:** Proceed to Phase 5.
+- **If no issues are found:** Proceed to Phase 6.
 - **Cap at 3 review cycles.** If issues persist after 3 rounds, note the remaining
   concerns in the PR description and proceed rather than looping forever.
 
-## Phase 5: Commit & PR
+## Phase 6: Commit & PR
 
 1. Determine the branch name:
    - If the plan references a Linear ticket, look it up via MCP to get the `gitBranchName`.
@@ -75,8 +104,10 @@ Run `/code-review` to review your changes against the base branch.
    ```
 5. Verify the PR title matches `[TICKET-ID] Descriptive title`. If `--ai` overwrote
    it, fix with `gh pr edit <number> --title "..."`.
+6. Include the Phase 4 verification note in the PR description (what was
+   observed, or why it couldn't be checked) so the human reviewer has it.
 
-## Phase 6: Report
+## Phase 7: Report
 
 Output a summary:
 
@@ -92,6 +123,8 @@ Output a summary:
 
 **Build:** Passing
 **Tests:** Passing (or note any pre-existing failures)
+
+**Verification:** <what was observed running it, or why it wasn't checked>
 
 **Code review:** Clean (or note review cycles and any remaining concerns)
 - <any concerns, judgment calls, or deviations from the plan>
