@@ -109,6 +109,40 @@ Until one of these is true, one Model object per screen or cohesive
 feature, with no intermediate wire-format/domain-format split — a decoded
 network response can be mapped straight into the state your Model exposes.
 
+## Persistence
+
+Not every Model needs to persist anything — state that's fine to reset on
+relaunch (most transient UI state, a screen's scroll position, an
+in-progress unsaved form) doesn't need a persistence mechanism at all.
+When something does need to survive a relaunch, pick the mechanism by what
+you're actually storing, not by default:
+
+- Small, simple values (a flag, a preference, a last-viewed id):
+  `UserDefaults`.
+- Secrets — tokens, credentials, anything sensitive: **Keychain, never
+  `UserDefaults`.**
+- Structured, relational, or queryable data: SwiftData.
+- Large binary blobs (images, downloaded files): the filesystem, referenced
+  by path or identifier from wherever you track it.
+
+### SwiftData
+
+If a Model persists its state via SwiftData specifically:
+
+- `@Model` classes are automatically `Observable` — do not add the
+  `@Observable` macro to them.
+- Use `@Bindable` for two-way form bindings to a `@Model`'s properties.
+- For a screen that's just displaying a reactive fetch with no other Model
+  logic, `@Query` directly in the view is fine (see "Default Shape" above)
+  — you don't need a Model wrapper just to hold a query.
+- For a Model that fetches as part of broader logic, use
+  `modelContext.fetch()` inside the Model — `@Query` doesn't work there.
+- Relationship delete rules are explicit at the model level: `.cascade`,
+  `.nullify`, or `.deny` — pick deliberately, don't leave the default.
+- `#Predicate` has real limitations. When a filter can't be expressed in
+  the predicate DSL, fetch and filter in memory rather than fighting the
+  predicate — but note that as a known tradeoff, not a silent workaround.
+
 ## Concurrency
 
 - Target current Swift concurrency (structured `async/await`, no completion
@@ -152,8 +186,12 @@ not something this shared file can supply.
   `@Published` — always `@Observable` with `@State`.
 - NEVER introduce a ViewModel type whose only job is forwarding to a Model
   underneath it.
+- NEVER store secrets, tokens, or credentials in `UserDefaults` — use
+  Keychain.
 - NEVER use `@Query` inside a Model class — it only works directly inside
   a `View`. Use `modelContext.fetch()` in a Model instead.
+- NEVER add the `@Observable` macro to a `@Model` class — it's already
+  Observable.
 - NEVER split a Model into more layers before the triggers in "When to
   Split Further" are actually met.
 - ALWAYS mark `@Observable` Model classes `@MainActor`.
