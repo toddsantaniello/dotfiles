@@ -18,8 +18,7 @@ they grow, and stay easy to build correctly alongside an AI pair programmer.
   unit of work. The interior, once past that boundary, can assume its data
   is well-formed.
 - **Verify, don't assume** — about the codebase and about AI-generated
-  suggestions alike. See "Working With an AI Pair Programmer" below; it's
-  as load-bearing as any layering rule in this doc.
+  suggestions alike.
 
 ## Layering
 

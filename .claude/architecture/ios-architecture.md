@@ -7,9 +7,6 @@ can hold its state — not a requirement of the pattern. This file should
 work equally well for an app backed by SwiftData, a plain REST client, or
 in-memory state.
 
-See also: `ai-collaboration.md` for how to work with an AI agent on any
-codebase, regardless of platform.
-
 This file covers architecture and tooling conventions that hold across
 projects. Per-project specifics — bundle ID, deployment target, scheme
 names, and a file structure with purpose annotations — belong in that
