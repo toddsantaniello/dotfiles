@@ -1,0 +1,43 @@
+# Basic PATH configuration
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.git-scripts"
+
+# Add Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Add your PostgreSQL and Mint paths
+# export PATH="/opt/homebrew/opt/libpq/bin:$HOME/.mint/bin:$PATH"
+# export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# Created by Zap installer
+[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
+plug "zsh-users/zsh-autosuggestions"
+plug "zap-zsh/supercharge"
+plug "zap-zsh/zap-prompt"
+plug "zsh-users/zsh-syntax-highlighting"
+plug "chivalryq/git-alias"
+
+# Load and initialise completion system
+autoload -Uz compinit
+compinit
+
+# Basic aliases
+alias ls='ls -alF --color=auto'
+
+# eval "$(starship init zsh)"
+
+#alias claude="/Users/todd/.claude/local/claude"
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
+export PATH="$JAVA_HOME:$PATH"
+
+# bun completions
+[ -s "/Users/todd/.bun/_bun" ] && source "/Users/todd/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# ADB
+export ANDROID_TOOLS="$HOME/Library/Android/sdk/platform-tools"
+export PATH="$ANDROID_TOOLS:$PATH"
+
+alias claude-mem='/Users/todd/.bun/bin/bun "/Users/todd/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'

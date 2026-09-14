@@ -152,6 +152,10 @@ If a Model persists its state via SwiftData specifically:
 
 ## Build & Test — Prefer MCP Tools
 
+*(Claude Code/MCP-specific — an agent without MCP tool access should just
+use `xcodebuild`/`xcrun simctl` directly; everything else in this file
+applies regardless of tooling.)*
+
 If XcodeBuildMCP (or an equivalent MCP-based build server) is available in
 the session, prefer it over raw shell commands. It returns structured JSON;
 shell commands return unstructured text that costs more tokens to parse and
