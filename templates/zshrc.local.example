@@ -1,0 +1,10 @@
+# Machine-specific zsh config. Copy to ~/.zshrc.local and keep what applies:
+#   cp templates/zshrc.local.example ~/.zshrc.local
+# Sourced at the end of ~/.zshrc; never tracked in dotfiles.
+
+# Java
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21"
+export PATH="$JAVA_HOME/bin:$PATH"
+
+# claude-mem plugin worker
+alias claude-mem='bun "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
