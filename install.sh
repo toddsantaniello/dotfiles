@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
-PACKAGES=(claude zsh vim tmux)
+PACKAGES=(claude zsh vim tmux ghostty)
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
