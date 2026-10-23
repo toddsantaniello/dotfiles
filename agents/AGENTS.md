@@ -14,7 +14,7 @@
 
 When the user approves a plan (says "implement", "go for it", "yes please", etc.), run the `implement` skill. It handles everything: reading the plan, creating the branch, writing code, building, testing, verifying behavior, self-reviewing, and opening a draft PR.
 
-Plans from the `architect` skill are saved to `~/.claude/plans/`. Always use the most recent plan file - never rely on conversation context.
+Plans from the `architect` skill are saved to `.agents/plans/` at the root of the repo they belong to (ignored via the global `~/.config/git/ignore`). Always use the most recent plan file - never rely on conversation context.
 
 The `architect` → `implement` → `code-review` skills are thin adapters over tool-agnostic process docs in `~/.agents/process/` - those docs are the actual method (usable by any agent, not just this one); the skills just map them onto agent tools, slash commands, and subagent model pinning (Claude subagents in `~/.claude/agents/`).
 

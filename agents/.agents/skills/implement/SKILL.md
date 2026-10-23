@@ -17,7 +17,7 @@ phases.
 ## Phase 1 — finding the plan
 
 If an argument was provided, use it to find the plan (filename or ticket
-ID). Otherwise use the most recent file in `~/.claude/plans/`. If none
+ID). Otherwise use the most recent file in `.agents/plans/` at the repo root. If none
 exists, stop and tell the user:
 
 > No plan found. Run `/architect` first to create one.

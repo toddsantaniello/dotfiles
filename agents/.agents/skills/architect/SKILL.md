@@ -15,7 +15,8 @@ mechanics.
 
 ## Claude Code specifics
 
-- Write the plan file to `~/.claude/plans/YYYY-MM-DD-<slug>.md`.
+- Write the plan file to `.agents/plans/YYYY-MM-DD-<slug>.md` at the repo root
+  (`git rev-parse --show-toplevel`). It is git-ignored globally.
 - When the conversation concludes, after writing the file and outputting
   the plan, close with:
 
