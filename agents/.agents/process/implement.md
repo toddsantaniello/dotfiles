@@ -38,6 +38,9 @@ Follow the plan's recommended approach step by step.
    a broken build.
 3. **Run tests.** Fix any regressions your changes caused. If a test was
    already failing before your changes, note it but don't block on it.
+   Run the tests that cover the change, using the project's scoped
+   commands (a single package, suite or test filter); don't run full slow
+   suites unless the project's docs require it or the change is broad.
 4. **Run linters/formatters.** Fix any issues.
 5. If build or tests still fail after 3 fix attempts, stop and report the
    failure clearly. Do not hand off broken code.
