@@ -5,7 +5,7 @@ allowed-tools: Bash(gh pr view:*), Bash(gh api:*), Bash(git status:*), Bash(git 
 ---
 
 Follow the process in
-[`../process/review-pr-comments.md`](../process/review-pr-comments.md)
+[`~/.agents/process/review-pr-comments.md`](../../process/review-pr-comments.md)
 exactly for the PR: $ARGUMENTS. This file only maps that process onto
 Claude Code's tools.
 

@@ -7,7 +7,7 @@ allowed-tools: Bash(git *), Read, Glob, Grep, Agent
 
 Review the current branch's changes against the base branch (default
 `origin/main`, or `$ARGUMENTS` if given), following the method in
-[`../process/code-review.md`](../process/code-review.md) exactly. This
+[`~/.agents/process/code-review.md`](../../process/code-review.md) exactly. This
 file only maps that method onto Claude Code's `Agent` tool and pins which
 model runs which step — edit the `model:` field in the referenced agent
 files to change cost/quality tradeoffs; nothing else needs to change.

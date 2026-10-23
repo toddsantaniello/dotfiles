@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
-PACKAGES=(claude zsh vim tmux ghostty)
+PACKAGES=(agents claude zsh vim tmux ghostty)
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -55,6 +55,10 @@ backup_conflicts() {
     done < <(cd "$package" && find . \( -type f -o -type l \) -print0)
 }
 
+# A real ~/.agents/skills keeps stow from folding it into the repo, so skill
+# installers (npx skills, pfw) write into ~ instead of into git.
+mkdir -p ~/.agents/skills
+
 for package in "${SELECTED_PACKAGES[@]}"; do
     if [[ ! -d "$package" ]]; then
         error "Package '$package' not found"
@@ -70,6 +74,32 @@ for package in "${SELECTED_PACKAGES[@]}"; do
         stow -t ~ "$package"
     fi
 done
+
+# Point each harness at the shared ~/AGENTS.md and ~/.agents/skills. These are
+# made here rather than stowed: a link stowed from the repo resolves relative to
+# the repo, not to ~.
+harness_links=(
+    "../AGENTS.md:$HOME/.claude/CLAUDE.md"
+    "../.agents/skills:$HOME/.claude/skills"
+    "../AGENTS.md:$HOME/.codex/AGENTS.md"
+)
+if [[ " ${SELECTED_PACKAGES[*]} " == *" agents "* ]]; then
+    for entry in "${harness_links[@]}"; do
+        target="${entry%%:*}" link="${entry#*:}"
+        if [[ "$UNINSTALL" == true ]]; then
+            [[ -L "$link" ]] && rm "$link"
+            continue
+        fi
+        mkdir -p "$(dirname "$link")"
+        if [[ -e "$link" && ! -L "$link" ]]; then
+            backup="$link.bak.$(date +%Y%m%d%H%M%S)"
+            warn "Backing up existing $link -> $backup"
+            mv "$link" "$backup"
+        fi
+        info "Linking $link -> $target"
+        ln -sfn "$target" "$link"
+    done
+fi
 
 # Zap plugin manager for zsh. --keep stops the installer from replacing the
 # stowed .zshrc.

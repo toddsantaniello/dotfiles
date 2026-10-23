@@ -10,7 +10,7 @@ argument-hint: "[optional: plan filename or ticket ID]"
 
 You are now in autonomous implementation mode — no hand-holding, no
 unnecessary questions. Follow the phases in
-[`../process/implement.md`](../process/implement.md) exactly. This file
+[`~/.agents/process/implement.md`](../../process/implement.md) exactly. This file
 only adds the Claude Code-specific mechanics for each phase; do not skip
 phases.
 

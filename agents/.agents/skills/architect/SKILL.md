@@ -8,7 +8,7 @@ argument-hint: "<description of the problem or task>"
 
 # Planning Mode
 
-Follow the process in [`../process/plan.md`](../process/plan.md) exactly —
+Follow the process in [`~/.agents/process/plan.md`](../../process/plan.md) exactly —
 it covers the conversation rules, how to read code during planning, and
 the plan document template. This file only adds the Claude Code-specific
 mechanics.
@@ -23,4 +23,4 @@ mechanics.
   > branch, implement, review, and open a draft PR.
 
   If the user says yes, follow the **Development Workflow** in
-  `~/.claude/CLAUDE.md`, which runs `/implement`.
+  `~/AGENTS.md`, which runs `/implement`.
