@@ -102,6 +102,11 @@ Summarize:
 - What Phase 4 verification observed
 - Review outcome (clean, or remaining concerns)
 - Any judgment calls or deviations from the plan
+- Readiness for human review: if the project's instruction file defines
+  when a change is ready for human review (e.g. review-bot sign-offs,
+  green CI, answered bot comments), list each criterion with its current
+  status. A draft is never ready - say what the human must do next (e.g.
+  mark it ready so review bots start).
 
 ## Rules
 

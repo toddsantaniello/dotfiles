@@ -106,4 +106,11 @@ Output a summary:
 
 **Code review:** Clean (or note review cycles and any remaining concerns)
 - <any concerns, judgment calls, or deviations from the plan>
+
+**Ready for human review:** No - draft PR. Remaining per <instruction file>:
+- [ ] <each readiness criterion, with current status>
+- Next step: <what the human must do, e.g. mark ready so review bots start>
 ```
+
+Omit the readiness section when the project's instruction files define no
+readiness criteria.

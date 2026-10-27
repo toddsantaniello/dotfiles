@@ -3,6 +3,11 @@
 Tool-agnostic description of turning open PR review comments into an
 approved implementation plan.
 
+If the project defines its own process for handling review comments (a
+shared skill or doc its instruction files point to), follow that instead
+of this one: it owns the project's review policy - which reviewers gate,
+when to decline or ask, how to reply and resolve.
+
 ## Goal
 
 1. Fetch and analyze all review comments on the PR.
@@ -13,7 +18,9 @@ approved implementation plan.
 ## Step 1: Fetch PR Comments
 
 Pull every review comment on the PR, plus the PR's top-level reviews, from
-whatever code host this project uses.
+whatever code host this project uses. Fetch inline comments as threads,
+with each thread's ID and resolved state, so already-resolved threads are
+not re-triaged and replies can target the right thread.
 
 ## Step 2: Analyze Comments
 

@@ -23,6 +23,12 @@ equivalent) — the root one, plus any in directories containing modified
 files. Follow their links to the docs that govern the changed areas
 (coding guidelines, framework rules, scoped COMPONENT.md/README.md).
 
+Also look for a written engineering standard the project ships, even when
+no instruction file links it - typically a shared skill's reference doc
+(e.g. `.skills/engineering-discipline/references/engineering-discipline.md`
+in town). It ranks below the instruction files and the docs they link:
+where they conflict, the project's own rule wins.
+
 ## Step 3: Summarize the Changes
 
 Produce: list of files modified, a brief description of what each change
@@ -36,7 +42,10 @@ supports it):
 - **Convention compliance** (x2, independently): audit changes against
   the conventions found in Step 2. Only apply a rule that governs the
   changed file: from an instruction file on its path, or from a linked
-  doc that covers that file's area.
+  doc that covers that file's area. If Step 2 found an engineering
+  standard, read it in full and apply its rules that bear on the change's
+  actual risks; a finding from it must cite the rule ID and name the
+  concrete defect, never a stylistic preference.
 - **Bugs, pass 1**: scan for obvious bugs, working only from the diff
   itself without extra context. Flag only significant bugs; ignore
   nitpicks and likely false positives. Don't flag anything you can't
@@ -57,7 +66,8 @@ Keep only issues where:
 - A concrete, reachable sequence of inputs or events produces wrong
   behavior (e.g. an unhandled failure, cancellation, retry, or re-entry
   path). Name the sequence.
-- A project-convention violation you can quote the exact rule for.
+- A project-convention violation you can quote the exact rule for
+  (including an engineering-standard rule ID with its concrete defect).
 - A security vulnerability (injection, XSS, etc.).
 
 Drop:
