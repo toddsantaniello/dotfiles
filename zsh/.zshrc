@@ -14,6 +14,10 @@ if [ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ]; then
     plug "zsh-users/zsh-autosuggestions"
     plug "zap-zsh/supercharge"
     plug "zap-zsh/zap-prompt"
+    # Show only the branch: the theme's dirty/untracked checks scan the whole
+    # working tree on every prompt, which is slow in big repos
+    zstyle -d ':vcs_info:git*+set-message:*' hooks
+    zstyle ':vcs_info:*' check-for-changes false
     plug "zsh-users/zsh-syntax-highlighting"
     plug "chivalryq/git-alias"
 fi
