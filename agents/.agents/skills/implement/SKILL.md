@@ -17,13 +17,23 @@ phases.
 ## Phase 1 — finding the plan
 
 If an argument was provided, use it to find the plan (filename or ticket
-ID). Otherwise use the most recent file in `.agents/plans/` at the repo root. If none
+ID). Otherwise use the most recent file in `~/.agents/plans/<project>/`, where
+`<project>` is
+`basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"`. If none
 exists, stop and tell the user:
 
 > No plan found. Run `/architect` first to create one.
 
 If the plan references a ticket in an issue tracker your session has MCP
 access to (e.g. Linear), look it up for additional context.
+
+Then create the branch, named from the ticket ID (if any) or the plan
+title, following the project's branch naming convention if it has one:
+
+```
+git fetch origin
+git switch -c <branch-name> origin/main
+```
 
 ## Phase 4 — verifying behavior
 
@@ -62,22 +72,18 @@ Default to plain `git` + the `gh` CLI unless this project's own
 `CLAUDE.md`/`AGENTS.md` specifies different branch/PR tooling (e.g. a team
 using Graphite) — follow that instead when present.
 
-1. Determine the branch name from a ticket ID (if any) or the plan title.
-2. Stage the specific changed files:
+1. Stage the specific changed files and commit on the branch created in
+   Phase 1:
    ```
    git add <specific files>
-   ```
-3. Create the branch and commit:
-   ```
-   git checkout -b <branch-name>
    git commit -m "<message>"
    ```
-4. Push and open a draft PR:
+2. Push and open a draft PR:
    ```
    git push -u origin <branch-name>
    gh pr create --draft --title "<title>" --body "<body>"
    ```
-5. Include the Phase 4 verification note in the PR body.
+3. Include the Phase 4 verification note in the PR body.
 
 ## Phase 7 — report
 

@@ -15,8 +15,11 @@ mechanics.
 
 ## Claude Code specifics
 
-- Write the plan file to `.agents/plans/YYYY-MM-DD-<slug>.md` at the repo root
-  (`git rev-parse --show-toplevel`). It is git-ignored globally.
+- Write the plan file to `~/.agents/plans/<project>/YYYY-MM-DD-<slug>.md`,
+  outside the checkout. `<project>` is the main checkout's directory name, shared
+  by all its worktrees:
+  `basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"`.
+  Create the folder if it does not exist.
 - When the conversation concludes, after writing the file and outputting
   the plan, close with:
 

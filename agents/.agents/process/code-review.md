@@ -20,7 +20,8 @@ true, respond "No review needed" and stop:
 
 Locate the project's own instruction files (CLAUDE.md/AGENTS.md or
 equivalent) — the root one, plus any in directories containing modified
-files.
+files. Follow their links to the docs that govern the changed areas
+(coding guidelines, framework rules, scoped COMPONENT.md/README.md).
 
 ## Step 3: Summarize the Changes
 
@@ -33,8 +34,9 @@ Review independently along these lines (in parallel if your tooling
 supports it):
 
 - **Convention compliance** (x2, independently): audit changes against
-  the project's own instruction files. Only apply a rule from a file that
-  shares a path with the changed file or its parents.
+  the conventions found in Step 2. Only apply a rule that governs the
+  changed file: from an instruction file on its path, or from a linked
+  doc that covers that file's area.
 - **Bugs, pass 1**: scan for obvious bugs, working only from the diff
   itself without extra context. Flag only significant bugs; ignore
   nitpicks and likely false positives. Don't flag anything you can't
@@ -52,12 +54,16 @@ flagged (bug / convention violation / security), and severity
 Keep only issues where:
 - The code will fail to compile or parse.
 - The code will definitely produce wrong results regardless of input.
+- A concrete, reachable sequence of inputs or events produces wrong
+  behavior (e.g. an unhandled failure, cancellation, retry, or re-entry
+  path). Name the sequence.
 - A project-convention violation you can quote the exact rule for.
 - A security vulnerability (injection, XSS, etc.).
 
 Drop:
 - Style/quality concerns.
-- Anything that depends on specific inputs or state you haven't verified.
+- Speculative scenarios you can't trace through the code to a wrong
+  outcome.
 - Subjective suggestions.
 - Pre-existing issues not introduced by this diff.
 - Anything a linter would catch.

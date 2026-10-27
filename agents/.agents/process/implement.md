@@ -15,8 +15,15 @@ Work through every phase in order. Do not skip phases.
    - The files involved
    - The recommended approach and steps
 3. If no plan exists, stop and say so rather than guessing at scope.
+4. Create a feature branch from the up-to-date base branch before making
+   any changes, named from the ticket (if any) or the plan title.
 
 ## Phase 2: Implement
+
+Before writing code, read the docs in the plan's Applicable Conventions
+section. For any file you touch that the plan didn't cover, read the docs
+the root instruction file links to for that area, plus any scoped
+AGENTS.md, COMPONENT.md, or README.md near it.
 
 Follow the plan's recommended approach step by step.
 
@@ -25,6 +32,8 @@ Follow the plan's recommended approach step by step.
 - Respect existing patterns in the codebase. Read surrounding code before
   writing.
 - Handle errors explicitly. Never silently swallow failures.
+- Implement every path in the plan's Failure Paths section, with a test
+  for each where practical.
 - Work incrementally — one logical change at a time.
 - If the plan is unclear or conflicts with what you see in the code, make
   a reasonable judgment call and note it. Do not stop to ask unless it's
@@ -78,11 +87,9 @@ Run this project's code review process against your changes.
 
 ## Phase 6: Commit & Hand Off
 
-1. Determine a branch/change name from the ticket (if any) or the plan
-   title.
-2. Stage the specific changed files (not a blanket add).
-3. Commit with a message describing what changed and why.
-4. Open the change for review (a draft PR, a merge request, whatever this
+1. Stage the specific changed files (not a blanket add).
+2. Commit with a message describing what changed and why.
+3. Open the change for review (a draft PR, a merge request, whatever this
    project's tooling uses) including the Phase 4 verification note so the
    human reviewer has it.
 

@@ -1,4 +1,2 @@
 # Global gitignore (git reads ~/.config/git/ignore when core.excludesFile is unset)
 
-# Agent plans live next to the code they describe, but stay local
-.agents/plans/

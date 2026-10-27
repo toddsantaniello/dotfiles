@@ -58,6 +58,11 @@ You can and should read the codebase to inform the discussion. But:
 - Narrate what you're looking at and why.
 - Share relevant snippets so the human can see what you're seeing.
 - Ask about intent — code shows what it does, not what it was meant to do.
+- Before proposing approaches, read the project's root instruction file
+  (AGENTS.md/CLAUDE.md) and follow its links to the docs covering the
+  areas this work touches, plus any scoped AGENTS.md, COMPONENT.md, or
+  README.md near those files. Record what applies in the plan's
+  Applicable Conventions section.
 
 ## Do NOT
 
@@ -89,6 +94,12 @@ should be happening.>
 <Relevant system behavior, prior attempts, constraints. Reference
 specific files/modules.>
 
+## Applicable Conventions
+
+<Project docs and rules that govern this change, each with the specific
+rule or section that matters here (e.g. `native/AGENTS.md`: new tests use
+Swift Testing). The implementer reads these before writing code.>
+
 ## Hypotheses Considered
 
 ### 1. <Hypothesis name>
@@ -113,6 +124,13 @@ reasoning.>
 
 ### Files Likely Involved
 - `path/to/file.ext` — <why>
+
+### Failure Paths
+<For each new async operation, interval, or piece of state: what happens
+on failure, cancellation, timeout, retry, and re-entry (a second call
+while the first is in flight, a session or account change mid-operation).
+Each path needs defined behavior and, where practical, a test. Write
+"none" for a change with no async work or state.>
 
 ## Risks and Open Questions
 
