@@ -10,14 +10,8 @@
 * Before using "dynamic workflows", "ultra code" or any harness feature that immediately spawns a large swarm of subagents, always explain the tradeoffs and ask the user for explicit approval.
 * No broken code. Never commit or PR code that doesn't compile
 * Before adding complexity for a speculative or vanishingly unlikely race or security edge case, explain the concrete failure mode, likelihood, and complexity cost to the user and get their buy-in. Do not silently expand scope for theoretical robustness.
+* Write for a human reader, in complete sentences with subjects, verbs and connecting words. This applies to plans, step lists, bullets and status updates too. Keep replies concise by cutting what the reader doesn't need, such as repetition, inventories and rejected options, never by dropping grammar or by omitting reasoning, risks or assumptions the reader needs to judge the work.
 
-## development workflow
-
-When the user approves a plan (says "implement", "go for it", "yes please", etc.), run the `implement` skill. It handles everything: reading the plan, creating the branch, writing code, building, testing, verifying behavior, self-reviewing, and opening a draft PR.
-
-Plans from the `architect` skill are saved to `~/.agents/plans/<project>/`, outside every checkout. `<project>` is the name of the repo's main checkout directory, so all worktrees of a repo share one folder: `basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"`. Always use the most recent plan file in that folder - never rely on conversation context.
+## generated output
 
 Never write generated or bulky output (test results, `.xcresult` bundles, build products, logs, downloads) inside a checkout, not even in a git-ignored folder: dev tools such as Tailwind scan the working tree and ignore only the repo's own `.gitignore`. Use the session scratchpad, or `~/.agents/scratch/<project>/` when it must outlive the session.
-
-The `architect` → `implement` → `code-review` skills are thin adapters over tool-agnostic process docs in `~/.agents/process/` - those docs are the actual method (usable by any agent, not just this one); the skills just map them onto agent tools, slash commands, and subagent model pinning (Claude subagents in `~/.claude/agents/`).
-
