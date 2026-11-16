@@ -1,2 +1,5 @@
 # Global gitignore (git reads ~/.config/git/ignore when core.excludesFile is unset)
 
+
+# Git LFS can write hooks into husky's hook folder before husky runs
+.husky/_/
