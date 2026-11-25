@@ -2,11 +2,8 @@
 
 ## Workflow & Architecture
 
-This project follows the shared engineering process and architecture
-conventions in `~/.claude/`:
-
-- Workflow: `~/.claude/process/` (plan → implement → verify → review)
-- Architecture: `~/.claude/architecture/<platform>-architecture.md`
+This project follows the shared architecture conventions in
+`~/.claude/architecture/<platform>-architecture.md`.
 
 Everything below is what's specific to *this* project. Anything not
 covered here defers to those shared docs.
@@ -19,7 +16,7 @@ covered here defers to those shared docs.
 
 ## Branch & PR Tooling
 
-Default: plain `git` + `gh` CLI (see `~/.claude/process/implement.md`).
+Default: plain `git` + `gh` CLI.
 Override here if this project uses something else (Graphite, a specific
 ticket tracker's branch-naming convention, etc.).
 

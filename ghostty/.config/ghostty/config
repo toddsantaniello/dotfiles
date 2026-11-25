@@ -2,5 +2,5 @@ theme = iTerm2 Solarized Dark
 font-family = "JetBrainsMono Nerd Font Mono"
 
 # Switch tmux windows (prefix C-b, then p/n)
-keybind = super+shift+arrow_left=text:\x02p
-keybind = super+shift+arrow_right=text:\x02n
+keybind = super+shift+[=text:\x02p
+keybind = super+shift+]=text:\x02n
